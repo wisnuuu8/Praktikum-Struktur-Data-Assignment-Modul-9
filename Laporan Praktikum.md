@@ -1,4 +1,4 @@
-![image](https://github.com/wisnuuu8/Praktikum-Struktur-Data-Assignment-Modul-9/assets/162652149/9e12f482-b03d-4d22-b888-6b2dfd8ae9a2)**BAB 1**
+**BAB 1**
 
 **PENDAHULUAN**
 
