@@ -1,4 +1,4 @@
-**BAB 1**
+![image](https://github.com/wisnuuu8/Praktikum-Struktur-Data-Assignment-Modul-9/assets/162652149/9e12f482-b03d-4d22-b888-6b2dfd8ae9a2)**BAB 1**
 
 **PENDAHULUAN**
 
@@ -6,7 +6,7 @@
 
 **Rekursif**
 
-Rekursif adalah metode dalam pemrograman di mana sebuah fungsi memanggil dirinya sendiri secara langsung atau tidak langsung untuk menyelesaikan sebuah masalah. Teknik ini sering digunakan untuk menyederhanakan solusi dari masalah yang kompleks dengan memecahnya menjadi sub-masalah yang lebih sederhana dan berulang. Rekursif biasanya memiliki dua komponen utama:
+Rekursif adalah metode dalam pemrograman di mana sebuah fungsi memanggil dirinya sendiri secara langsung atau tidak langsung untuk menyelesaikan sebuah masalah [1]. Teknik ini sering digunakan untuk menyederhanakan solusi dari masalah yang kompleks dengan memecahnya menjadi sub-masalah yang lebih sederhana dan berulang. Rekursif biasanya memiliki dua komponen utama:
 
 Base Case (Kasus Dasar): Kondisi yang akan menghentikan rekursi. Tanpa base case, rekursi akan terus berjalan tanpa henti (infinite loop).
 Recursive Case (Kasus Rekursif): Bagian dari fungsi yang memecah masalah menjadi sub-masalah yang lebih kecil dan memanggil fungsi itu sendiri dengan sub-masalah tersebut.
@@ -14,7 +14,7 @@ Contoh umum dari penggunaan rekursif adalah dalam perhitungan faktorial, pencari
 
 **Hash Table**
 
-Hash Table adalah struktur data yang mengimplementasikan sebuah array asosiatif, sebuah struktur data yang dapat memetakan kunci (key) ke nilai (value). Hash table menggunakan fungsi hash untuk menghitung indeks dari array di mana nilai yang diinginkan dapat ditemukan atau disimpan. Fungsi hash mengambil input kunci dan mengembalikan indeks array di mana nilai terkait akan ditempatkan.
+Hash Table adalah struktur data yang mengimplementasikan sebuah array asosiatif, sebuah struktur data yang dapat memetakan kunci (key) ke nilai (value). Hash table menggunakan fungsi hash untuk menghitung indeks dari array di mana nilai yang diinginkan dapat ditemukan atau disimpan [2]. Fungsi hash mengambil input kunci dan mengembalikan indeks array di mana nilai terkait akan ditempatkan.
 
 Komponen utama dari hash table adalah:
 
@@ -87,7 +87,7 @@ Hash Table adalah struktur data yang mengorganisir data ke dalam pasangan kunci-
 
 **Fungsi Hash:**
 
-Fungsi hash membuat pemetaan antara kunci dan nilai menggunakan rumus matematika. Hasil dari fungsi ini adalah nilai hash yang digunakan sebagai indeks array.
+Fungsi hash membuat pemetaan antara kunci dan nilai menggunakan rumus matematika. Hasil dari fungsi ini adalah nilai hash yang digunakan sebagai indeks array [3].
 
 **Operasi Hash Table:**
 
@@ -924,3 +924,269 @@ int main() {
 }
 ```
 **BAGIAN 1**
+```C++
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+```
+Interpretasi : 
+
+#include <iostream>: Pustaka ini digunakan untuk input dan output, seperti cout untuk output ke console.
+
+#include <string>: Pustaka ini menyediakan tipe data std::string yang digunakan untuk manipulasi string.
+
+#include <vector>: Pustaka ini menyediakan template kelas std::vector, yang merupakan salah satu tipe container sequence di C++.
+
+**BAGIAN 2**
+```C++
+struct Mahasiswa {
+    string nim;
+    int nilai;
+};
+
+const int TABLE_SIZE = 100;
+```
+Interpretasi : 
+
+Kode tersebut mendefinisikan sebuah struktur `Mahasiswa` yang memiliki dua anggota: `string nim` untuk menyimpan Nomor Induk Mahasiswa dan `int nilai` untuk menyimpan nilai mahasiswa. Selain itu, didefinisikan juga sebuah konstanta `TABLE_SIZE` dengan nilai 100, yang biasanya digunakan untuk menentukan ukuran dari sebuah tabel atau array yang akan menyimpan beberapa objek `Mahasiswa`.
+
+**BAGIAN 3**
+```C++
+class HashNode {
+public:
+    Mahasiswa data;
+    HashNode* next;
+
+    HashNode(Mahasiswa data) : data(data), next(NULL) {}
+};
+```
+Interpretasi : 
+
+Kelas `HashNode` mendefinisikan sebuah node untuk digunakan dalam struktur data hash table, di mana setiap node menyimpan data berupa objek `Mahasiswa` dan sebuah pointer `next` yang menunjuk ke node berikutnya dalam rantai linked list untuk mengatasi collision dengan metode chaining. Kelas ini memiliki konstruktor yang menginisialisasi anggota `data` dengan objek `Mahasiswa` yang diberikan dan mengatur pointer `next` ke `NULL`, menandakan bahwa node awalnya tidak menunjuk ke node lain. Anggota `data` dan `next` bersifat publik, sehingga dapat diakses dari luar kelas.
+
+**BAGIAN 4**
+```C++
+class HashMap {
+private:
+    vector<HashNode*> table;
+
+int hashFunc(string nim) {
+    int hash_val = 0;
+    for (size_t i = 0; i < nim.length(); ++i) {
+        hash_val += nim[i];
+    }
+    return hash_val % TABLE_SIZE;
+}
+
+public:
+HashMap() : table(TABLE_SIZE, NULL) {}
+
+    // Fungsi untuk menambahkan data mahasiswa ke hash table
+    void tambahData(Mahasiswa mahasiswa) {
+        int index = hashFunc(mahasiswa.nim);
+        HashNode* newNode = new HashNode(mahasiswa);
+if (table[index] == NULL) {
+            table[index] = newNode;
+        } else {
+            HashNode* current = table[index];
+while (current->next != NULL) {
+                current = current->next;
+            }
+            current->next = newNode;
+        }
+    }
+
+    // Fungsi untuk menghapus data mahasiswa dari hash table berdasarkan NIM
+    void hapusData(string nim) {
+        int index = hashFunc(nim);
+if (table[index] == NULL) {
+            HashNode* current = table[index];
+            HashNode* prev = NULL;
+            while (current != NULL && current->data.nim != nim) {
+                prev = current;
+                current = current->next;
+            }
+            if (current != NULL) {
+                if (prev != NULL) {
+                    prev->next = current->next;
+                } else {
+                    table[index] = current->next;
+                }
+                delete current;
+            }
+        }
+    }
+
+    // Fungsi untuk mencari data mahasiswa berdasarkan NIM
+    Mahasiswa* cariDataNIM(string nim) {
+        int index = hashFunc(nim);
+        HashNode* current = table[index];
+        while (current != NULL) {
+            if (current->data.nim == nim) {
+                return &current->data;
+            }
+            current = current->next;
+        }
+        return NULL;
+    }
+
+    // Fungsi untuk mencari data mahasiswa berdasarkan rentang nilai (80-90)
+    vector<Mahasiswa*> cariDataRentangNilai() {
+        vector<Mahasiswa*> hasil;
+        for (int i = 0; i < TABLE_SIZE; ++i) {
+            HashNode* node = table[i];
+            while (node != NULL) {
+                if (node->data.nilai >= 80 && node->data.nilai <= 90) {
+                    hasil.push_back(&node->data);
+                }
+                node = node->next;
+            }
+        }
+        return hasil;
+    }
+};
+
+// Fungsi untuk menampilkan menu
+void tampilkanMenu() {
+    cout << "Menu:" << endl;
+    cout << "1. Tambah data mahasiswa" << endl;
+    cout << "2. Hapus data mahasiswa" << endl;
+    cout << "3. Cari data mahasiswa berdasarkan NIM" << endl;
+    cout << "4. Cari data mahasiswa berdasarkan rentang nilai (80-90)" << endl;
+    cout << "5. Keluar" << endl;
+}
+
+int main() {
+    HashMap hashTable;
+    int pilihan;
+    do {
+        tampilkanMenu();
+        cout << "Pilih: ";
+        cin >> pilihan;
+        switch (pilihan) {
+            case 1: {
+                Mahasiswa mhs;
+                cout << "Masukkan NIM mahasiswa: ";
+                cin >> mhs.nim;
+                cout << "Masukkan nilai mahasiswa: ";
+                cin >> mhs.nilai;
+                hashTable.tambahData(mhs);
+                break;
+            }
+            case 2: {
+                string nim;
+                cout << "Masukkan NIM mahasiswa yang ingin dihapus: ";
+                cin >> nim;
+                hashTable.hapusData(nim);
+                break;
+            }
+            case 3: {
+                string nim;
+                cout << "Masukkan NIM mahasiswa yang ingin dicari: ";
+                cin >> nim;
+                Mahasiswa* hasil = hashTable.cariDataNIM(nim);
+                if (hasil != NULL) {
+                    cout << "Mahasiswa dengan NIM " << nim << " ditemukan. Nilainya: " << hasil->nilai << endl;
+                } else {
+                    cout << "Mahasiswa dengan NIM " << nim << " tidak ditemukan." << endl;
+                }
+                break;
+            }
+            case 4: {
+    vector<Mahasiswa*> hasil = hashTable.cariDataRentangNilai();
+    if (!hasil.empty()) {
+        cout << "Mahasiswa dengan nilai antara 80 dan 90:" << endl;
+        for (size_t i = 0; i < hasil.size(); ++i) {
+            Mahasiswa* mhs = hasil[i];
+            cout << "NIM: " << mhs->nim << ", Nilai: " << mhs->nilai << endl;
+        }
+    } else {
+        cout << "Tidak ada mahasiswa dengan nilai antara 80 dan 90." << endl;
+    }
+    break;
+}
+
+            case 5:
+                cout << "Keluar dari program." << endl;
+                break;
+            default:
+                cout << "Pilihan tidak valid. Silakan coba lagi." << endl;
+        }
+    } while (pilihan != 5);
+
+    return 0;
+}
+```
+Interpretasi :
+
+Kelas `HashMap` mengimplementasikan hash table dengan teknik chaining untuk mengelola data mahasiswa, menggunakan `vector<HashNode*>` sebagai tabel hash berukuran `TABLE_SIZE`. Fungsi hash `hashFunc` mengonversi NIM mahasiswa menjadi indeks tabel dengan menjumlahkan nilai ASCII dari karakter-karakter NIM. Konstruktornya menginisialisasi tabel dengan elemen `NULL`. Fungsi publiknya meliputi `tambahData` untuk menambahkan data mahasiswa, `hapusData` untuk menghapus data berdasarkan NIM, `cariDataNIM` untuk mencari data berdasarkan NIM, dan `cariDataRentangNilai` untuk mencari mahasiswa dengan nilai antara 80 dan 90. Fungsi `tampilkanMenu` menampilkan opsi untuk menambah, menghapus, mencari data mahasiswa, atau keluar dari program. Dalam fungsi `main`, objek `HashMap` dibuat dan menu ditampilkan dalam loop, di mana pilihan pengguna menentukan fungsi `HashMap` yang dipanggil, seperti menambahkan, menghapus, atau mencari data mahasiswa, atau keluar dari program.
+
+### HASIL OUTPUT 
+```C++
+Menu:
+1. Tambah data mahasiswa
+2. Hapus data mahasiswa
+3. Cari data mahasiswa berdasarkan NIM
+4. Cari data mahasiswa berdasarkan rentang nilai (80-90)
+5. Keluar
+Pilih: 1
+Masukkan NIM mahasiswa: 2311110046
+Masukkan nilai mahasiswa: 90
+Menu:
+1. Tambah data mahasiswa
+2. Hapus data mahasiswa
+3. Cari data mahasiswa berdasarkan NIM
+4. Cari data mahasiswa berdasarkan rentang nilai (80-90)
+5. Keluar
+Pilih: 1
+Masukkan NIM mahasiswa: 2311110036
+Masukkan nilai mahasiswa: 100
+Menu:
+1. Tambah data mahasiswa
+2. Hapus data mahasiswa
+3. Cari data mahasiswa berdasarkan NIM
+4. Cari data mahasiswa berdasarkan rentang nilai (80-90)
+5. Keluar
+Pilih: 2
+Masukkan NIM mahasiswa yang ingin dihapus: 2311110036
+Menu:
+1. Tambah data mahasiswa
+2. Hapus data mahasiswa
+3. Cari data mahasiswa berdasarkan NIM
+4. Cari data mahasiswa berdasarkan rentang nilai (80-90)
+5. Keluar
+Pilih: 3
+Masukkan NIM mahasiswa yang ingin dicari: 2311110036
+Mahasiswa dengan NIM 2311110036 ditemukan. Nilainya: 100
+Menu:
+1. Tambah data mahasiswa
+2. Hapus data mahasiswa
+3. Cari data mahasiswa berdasarkan NIM
+4. Cari data mahasiswa berdasarkan rentang nilai (80-90)
+5. Keluar
+Pilih: 4
+Mahasiswa dengan nilai antara 80 dan 90:
+NIM: 2311110046, Nilai: 90
+Menu:
+1. Tambah data mahasiswa
+2. Hapus data mahasiswa
+3. Cari data mahasiswa berdasarkan NIM
+4. Cari data mahasiswa berdasarkan rentang nilai (80-90)
+5. Keluar
+Pilih: 5
+Keluar dari program.
+
+--------------------------------
+Process exited after 81.53 seconds with return value 0
+Press any key to continue . . .
+```
+
+**DAFTAR PUSTAKA**
+
+Lutfina, E., Inayati, N., & Saraswati, G. W. (2022). Analisis Perbandingan Kinerja Metode Rekursif dan Metode Iteratif dalam Algoritma Linear Search. Komputika : Jurnal Sistem Komputer, 11(2), 143–150. https://doi.org/10.34010/komputika.v11i2.5493
+
+Herman, S. (2017). ILKOM Jurnal Ilmiah Volume 9 Nomor 3 Desember 2017. ILKOM Jurnal Ilmiah, 9(3), 262–267.
+
+Maysanjaya, I. M. D. (2013). Penerapan Algoritma Rekursif dan Pengolahan Citra Digital Untuk Pembuatan Motif Batik Guna Menambah Khazanah Budaya Batik Indonesia. Prosiding Konferensi Nasional Informatika, 71–75.
